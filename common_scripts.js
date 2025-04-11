@@ -1,0 +1,240 @@
+const wait = async (milliseconds) => {
+    return new Promise(resolve => {
+        setTimeout(resolve, milliseconds);
+    });
+};
+
+const retry = async (promise, delay = 100, maxRetry = 3, retryCnt = 1) => {
+    let r = await promise()
+        .then(r => r || {})
+        .catch(ex => { return { retry: true, ex }; });
+    if (r && r.retry) {
+        if (retryCnt < maxRetry) r = await wait(delay).then(() => retry(promise, delay, maxRetry, ++retryCnt));
+        else return Promise.reject(r.ex);
+    }
+    return r;
+};
+const HtmlMonitor = {
+    _observer: null,
+    waitForElement: function (selector, container, traceId) {
+        return this.monitorElements(selector, container, traceId, true, true);
+    },
+    waitForElements: function (selector, container, traceId) {
+        return this.monitorElements(selector, container, traceId, true);
+    },
+    monitorElement: function (selector, container, traceId) {
+        return this.monitorElements(selector, container, traceId, false, true);
+    },
+    monitorElements: function (selector, container, traceId, once, firstElementOnly) {
+        if (!traceId) traceId = new Date().getTime();
+        return new Promise(resolve => {
+            let items = container.querySelectorAll(selector);
+            console.log('[Movie-No-Ads] Query for:', selector, 'in', container, traceId, location.href);
+            if (items.length > 0) {
+                if (firstElementOnly) resolve(items[0], container);
+                else resolve(items, container);
+            }
+            if (!once || items.length == 0) {
+                console.log('[Movie-No-Ads] Monitor', container, 'for', selector, traceId, location.href);
+                const observer = new MutationObserver((_, sender) => {
+                    let items = sender.targetNode.querySelectorAll(sender.selector);
+                    if (items.length > 0) {
+                        if (once) {
+                            sender.disconnect();
+                            console.log('[Movie-No-Ads] Stop monitoring:', sender.targetNode, 'for', sender.selector, location.href, sender.traceId);
+                        }
+                        if (firstElementOnly) resolve(items[0], sender.targetNode);
+                        else resolve(items, sender.targetNode);
+
+                    }
+                });
+                observer.traceId = traceId;
+                observer.targetNode = container;
+                observer.selector = selector;
+                observer.observe(container, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true
+                });
+
+                console.log(traceId + '------------------------');
+            }
+
+        });
+    },
+
+    domReady: function (callback) {
+        if (document.readyState === "complete") {
+            callback();
+        } else {
+            window.addEventListener("load", callback, {
+                once: true,
+            });
+        }
+    }
+};
+const UtilityTool = {
+    waitFor: function (check, callback, arg) {
+        new Promise((resolve, reject) => {
+            if (check(arg)) resolve({ callback, arg });
+            else reject({ check, callback, arg });
+
+        }).then((n) => {
+            n.callback(n.arg);
+        }).catch((r) => {
+            this.waitFor(r.check, r.callback, r.arg);
+        });
+    },
+    isInDOM: function (el) {
+        if (el.tagName == 'HTML') return true;
+        else if (el.parentElement == null) return false;
+        else return this.isInDOM(el.parentElement);
+    },
+    ensureInDOM: function (el, retry) {
+        if (UtilityTool.isInDOM(el)) {
+            setTimeout((p) => UtilityTool.ensureInDOM(p.el, p.retry), 100, { el, retry });
+        }
+        else {
+            console.log('[Movie-No-Ads] Not in DOM, retry', el);
+            retry();
+        }
+    },
+    getMaxZindex: function(){
+        let zIndex_Max = -1;
+        let maxZindexEl = null;
+        var els = document.querySelectorAll('*');
+        for(var el of els){
+            const zIndex = window.getComputedStyle(el).zIndex;
+            if(!isNaN(zIndex) && parseInt(zIndex)> zIndex_Max){
+                zIndex_Max = parseInt(zIndex);
+                maxZindexEl = el;
+            }
+        }
+        return {zindex:zIndex_Max, element: maxZindexEl};
+    },
+    autoSkipButton: function (containerSelector, skipButtonSelectors) {
+        HtmlMonitor.domReady(() => {
+            HtmlMonitor.waitForElement(containerSelector, document.body).then(el => {
+                UtilityTool.ensureInDOM(el, () => {
+                    UtilityTool.autoSkipButton(containerSelector, skipButtonSelectors);
+                });
+                const observer = new MutationObserver((_, sender) => {
+                    const container = sender.containerEl;
+                    let skipBt = null;
+                    for (let selector of skipButtonSelectors) {
+                        skipBt = container.querySelector(selector);
+                        if (skipBt) break;
+                    }
+                    if (skipBt) {
+                        console.log('[Movie-No-Ads] Found skip button', skipBt);
+                        const video = container.querySelector('video');
+                        if (video && video.src && video.src != '') {
+                            if (video.lastAdSrc) {
+                                video.play();
+                                return;
+                            }
+                            console.log('[Movie-No-Ads] Ad vid detected', video.src, video.duration);
+                            video.lastAdSrc = video.src;
+                            video.currentTime = video.duration ? video.duration : Number.MAX_SAFE_INTEGER;
+                            retry(() => {
+                                if (video.src == video.lastAdSrc) return video.play();
+                                else return Promise.resolve({});
+                            }).then(() => {
+                                video.lastAdSrc = null;
+                            });
+                        }
+                        setTimeout((bt)=>{bt.click()}, 500, skipBt);
+                        //skipBt.click();
+                    }
+                });
+                observer.containerEl = el;
+                observer.observe(el, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true
+                });
+            });
+        });
+    },
+    autoSkipAdVideo: function (containerSelector, adVideoDetectors, skipButtonSelectors) {
+        HtmlMonitor.domReady(() => {
+            HtmlMonitor.waitForElement(containerSelector, document.body).then(el => {
+                UtilityTool.ensureInDOM(el, () => {
+                    UtilityTool.autoSkipButton(containerSelector, skipButtonSelectors);
+                });
+                const observer = new MutationObserver((_, sender) => {
+                    const container = sender.containerEl;
+                    let adDetected = false;
+                    for (let selector of adVideoDetectors) {
+                        if (container.querySelector(selector)) {
+                            adDetected = true;
+                            break;
+                        }
+                    }
+                    
+                    if (adDetected) {
+                        console.log('[Movie-No-Ads] Ad detected');
+                        const video = container.querySelector('video');
+                        if (video && video.src && video.src != '') {
+                            if (video.lastAdSrc) {
+                                video.currentTime = video.duration ? video.duration : Number.MAX_SAFE_INTEGER;
+                                //video.play();
+                                return;
+                            }
+                            console.log('[Movie-No-Ads] Ad video found', video.src, video.duration);
+                            video.lastAdSrc = video.src;
+                            video.currentTime = video.duration ? video.duration : Number.MAX_SAFE_INTEGER;
+                            //*
+                            retry(() => {
+                                if (video.src == video.lastAdSrc) return video.play();
+                                else return Promise.resolve({});
+                            }).then(() => {
+                                video.lastAdSrc = null;
+                            }).catch(ex=>{
+                                console.log('[Movie-No-Ads] Unable to continue ad video')
+                            });
+                            //*/
+                        }
+                        console.log('[Movie-No-Ads] Search for skip button');
+                        let skipBt = null;
+                        for (let selector of skipButtonSelectors) {
+                            skipBt = container.querySelector(selector);
+                            
+                        }
+                        if (skipBt) {
+                            setTimeout((bt)=>{bt.click()}, 500, skipBt);
+                            console.log('[Movie-No-Ads] Skip button should be clicked', skipBt);
+                        }
+                        else console.log('[Movie-No-Ads] no skip button found');
+                    }
+                });
+                observer.containerEl = el;
+                observer.observe(el, {
+                    childList: true,
+                    subtree: true,
+                    attributes: false
+                });
+            });
+        });
+    },
+    removeElements: function (elSelector) {
+        console.log('[Movie-No-Ads] Waiting for elements to remove', elSelector);
+        window.setInterval(function () {
+            var els = document.querySelectorAll(elSelector);
+            if(els.length > 0) {
+                console.log('[Movie-No-Ads] Found elements to be removed', els);
+                for(var el of els) el.remove();   
+            }
+        }, 500);
+
+    },
+    sendMessage: async (msg) => {
+        let r = await chrome.runtime.sendMessage(msg)
+            .then(r => { return r; })
+            .catch(() => { return null; });
+        if (r === null) r = await UtilityTool.sendMessage(msg);
+        return r;
+    }
+};
+
+console.log('[Movie-No-Ads] Common script is loaded', location.href);

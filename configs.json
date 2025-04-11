@@ -1,0 +1,449 @@
+{
+    "version":"2025.02.15",
+    "movie_sites": [
+        {
+            "name": "test",
+            "domains": [
+                "localhost1",
+                "webbrowsertools.com"
+            ],
+            "matches": [
+                "*://localhost1:*/*"
+            ],
+            "adElements": [
+                "img"
+            ],
+            "remoteCss": "http://dev-world.net/res/css/main.css"
+        },
+        {
+            "name": "youtubeTV",
+            "domains": [
+                "www.youtube.com/tv"
+            ],
+            "js": [
+                "youtube/script.js"
+            ],
+            "styles": {
+                "hiddens": [
+                    "ytd-engagement-panel-title-header-renderer[ads-semantic-text]",
+                    "ytd-mealbar-promo-renderer",
+                    "ytd-promoted-sparkles-web-renderer",
+                    "ytm-companion-ad-renderer",
+                    "ad-slot-renderer",
+                    "#player-ads",
+                    "div.ytp-cards-teaser",
+                    "div.ytp-ad-progress-list",
+                    "div.ytp-ce-element.ytp-ce-element-show",
+                    "button.branding-img-container",
+                    ".ytp-ad-progress-list",
+                    ".video-ads, .ytp-ad-module",
+                    ".video-ads.ytp-ad-module",
+                    "ytd-ad-slot-renderer",
+                    "yt-mealbar-promo-renderer",
+                    "ytlr-endscreen-element-renderer",
+                    ".ytlr-endscreen-renderer__endscreen-indicator",
+                    "ytlr-mealbar-promo-renderer"
+                ]
+            },
+            "block_all_excepts":[
+                "googlevideo.com",
+                "dev-world.net"
+            ],
+            "skipAds": [
+                {
+                    "container": "ytlr-app",
+                    "adVideos": [
+                        ".ad-showing"
+                    ],
+                    "skipButtons": [
+                        ".ytp-ad-skip-button",".ytp-ad-skip-button-modern"
+                    ]
+                }
+            ],
+            "extras":{
+                "fakeAdVidUrl": "https://dev-world.net/photo/resources/vid/bg.webm"
+            }
+        },
+        {
+            "name": "youtubeM",
+            "domains": [
+                "m.youtube.com"
+            ],
+            "js": [
+                "youtube/script.js"
+            ],
+            "styles": {
+                "hiddens": [
+                    "ytd-engagement-panel-title-header-renderer[ads-semantic-text]",
+                    "ytd-mealbar-promo-renderer",
+                    "ytd-promoted-sparkles-web-renderer",
+                    "ytm-companion-ad-renderer",
+                    "ad-slot-renderer",
+                    "#player-ads",
+                    "div.ytp-cards-teaser",
+                    "div.ytp-ad-progress-list",
+                    "div.ytp-ce-element.ytp-ce-element-show",
+                    "button.branding-img-container",
+                    ".ytp-ad-progress-list",
+                    ".video-ads, .ytp-ad-module",
+                    ".video-ads.ytp-ad-module",
+                    "ytd-ad-slot-renderer",
+                    "yt-mealbar-promo-renderer"
+                ]
+            },
+            "block_all_excepts":[
+                "googlevideo.com"
+            ],
+            "skipAds": [
+                {
+                    "container": "#player",
+                    "adVideos": [
+                        ".ad-showing"
+                    ],
+                    "skipButtons": [
+                        ".ytp-ad-skip-button",".ytp-ad-skip-button-modern"
+                    ]
+                }
+            ],
+            "extras":{
+                "fakeAdVidUrl": "https://dev-world.net/photo/resources/vid/bg.webm"
+            }
+        },
+        {
+            "name": "youtube",
+            "domains": [
+                "www.youtube.com"
+            ],
+            "js": [
+                "youtube/script.js"
+            ],
+            "styles": {
+                "hiddens": [
+                    "ytd-ads-engagement-panel-content-renderer",
+                    "ytd-engagement-panel-title-header-renderer[ads-semantic-text]",
+                    "ytd-mealbar-promo-renderer",
+                    "ytd-promoted-sparkles-web-renderer",
+                    "ytm-companion-ad-renderer",
+                    "ad-slot-renderer",
+                    "#player-ads",
+                    "div.ytp-cards-teaser",
+                    "div.ytp-ad-progress-list",
+                    "div.ytp-ce-element.ytp-ce-element-show",
+                    "button.branding-img-container",
+                    ".ytp-ad-progress-list",
+                    ".video-ads, .ytp-ad-module",
+                    ".video-ads.ytp-ad-module",
+                    "ytd-ad-slot-renderer",
+                    "yt-mealbar-promo-renderer",
+                    "panel-ad-header-image-lockup-view-model",
+                    ".ytp-suggested-action"
+                ]
+            },
+            
+            "skipAds": [
+                {
+                    "container": "ytd-app",
+                    "adVideos": [
+                        ".ad-showing"
+                    ],
+                    "skipButtons": [
+                        ".ytp-ad-skip-button",".ytp-ad-skip-button-modern"
+                    ]
+                }
+            ],
+            "extras":{
+                "fakeAdVidUrl": "https://dev-world.net/photo/resources/vid/bg.webm"
+            }
+        },
+        {
+            "name": "dailymotion",
+            "domains": [
+                "dailymotion.com",
+                "www.dailymotion.com"
+            ],
+            "styles":{
+                "hiddens":[
+                    "div[class^=DisplayAd__adContainer]",
+                    "div[class^=VideoInfo__videoInfoDAContainer]",
+                    "div[class*=NewWatchingDiscovery__adSection]",
+                    ".ttx-lb"]
+            },
+            "remoteCss": "div[class^=CookiePopup][role=dialog] {opacity: 0 !important,left: -1000px !important;top: -1000px !important;}",
+            "js": [
+                "dailymotion/script.js"
+            ],
+            "matches": [
+                "*://dailymotion.com/*"
+            ],
+            "block_all_excepts":[
+                "dmcdn.net"
+            ],
+            "skipAds": [
+                {
+                    "container": ".player",
+                    "adVideos": [
+                        ".controls_ad"
+                    ],
+                    "skipButtons": [
+                        ".controls_ad button.ad_button"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "nguontv",
+            "domains": [
+                "nguontv.live",
+                "nguontv.biz",
+                "nguontv.one",
+                "nguontva.com",
+                "nguontvb.com",
+                "nguontvc.com",
+                "nguontvd.com"
+            ],
+            "styles": {
+                "hiddens": [
+                    "div#antiAdblock",
+                    ".ads-popup",
+                    ".adsbox",
+                    ".ads-banner",
+                    ".afs_ads",
+                    ".adsbox.ads-banner.ads-popup",
+                    ".LOpopup",
+                    "iframe ~ *"
+                ]
+            },
+            "adElements": [
+                "#antiAdblock"
+            ],
+            "skipAds": [
+                {
+                    "container": "#playerBoxEmbed",
+                    "skipButtons": [
+                        ".jw-skip",
+                        ".jw-skiptext"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "bongngotv",
+            "domains": [
+                "bongngotv.tv",
+                "bongngotv1.net",
+                "bongngotv2.net"
+            ],
+            "styles":{
+                "hiddens":["#player + div",".afs_ads",".preload-banner",".ab1",".ads"]
+            },
+            "skipAds": [
+                {
+                    "container": "#box-player",
+                    "skipButtons": [
+                        ".jw-skip",
+                        ".jw-skiptext"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "hhkungfu",
+            "domains": [
+                "hhkungfu.app",
+                "hhkungfu.online",
+                "hhkungfu.cafe",
+                "hhkungfu.bio",
+                "hhkungfu.team",
+                "hhkungfu.city",
+                "hhkungfu.cool",
+                "hhkungfu.chat"
+            ],
+            "styles": {
+                "hiddens": [
+                    "#content div[style='min-height: 250px']","#rightads",".a--d-wrapper",".text-center iframe",
+                    "main > h4", "main > h4 + div", "main > h4 + div + div"
+                ]
+            }
+        },
+        {
+            "name": "hh3dhay",
+            "domains": [
+                "tram3d.tv",
+                "hh3dhay.life"
+            ],
+            "styles": {
+                "hiddens": [
+                    "#player + div",".afs_ads",".preload-banner",".ab1",".ads",
+                    ".float-ck-center-lt",".textwidget.custom-html-widget", 
+                    "#main-contents > img", "html > iframe", "div[class='text-center']"
+                ]
+            },
+            "adElements":["body + iframe, body + div"]
+        },
+        {
+            "name": "hoathinh3d",
+            "domains": [
+                "hoathinh3d.com",
+                "hoathinh3d.io",
+                "hoathinh3d.run",
+                "hoathinh3d.video",
+                "hoathinh3d.vin",
+                "hoathinh3d.top",
+                "hoathinh3d.mobi",
+                "hoathinh3d.sh",
+                "hoathinh3d.xyz",
+                "hoathinh3d.live",
+                "hoathinh3d.moe"
+            ],
+            "styles": {
+                "hiddens": [
+                    "#player + div",".afs_ads",".preload-banner",".ab1",".ads",
+                    "iframe[src*='facebook.com']"
+                ]
+            }
+        },
+        {
+            "name": "hhpanda",
+            "domains": [
+                "hhpanda.tv",
+                "hhpanda.love",
+                "hhpanda.live",
+                "hhpanda.my"
+            ],
+            "styles": {
+                "hiddens": [
+                    "#xs-addd0",".jw-logo.jw-logo-top-right",
+                    ".jw-text-track-display", ".jw-text-track-container"
+
+                ]
+            },
+            "skipAds": [
+                {
+                    "container": "#jwplayer",
+                    "skipButtons": [
+                        ".jw-skiptext",
+                        ".jw-skip"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "phimmoi",
+            "domains": [
+                "phimmoiplus.net",
+                "phimmoichill.com",
+                "phimmoichill.io",
+                "phimmoichill.biz",
+                "phimmoichill.tube",
+				"phimmoichill.bio",
+                "phimmoichill.ac",
+                "phimmoichill.bar"
+            ],
+            "remoteCss": "#box-player.box-player {background-image: none !important}",
+            "styles": {
+                "hiddens": [
+                    "#catfishs_content",
+                    "#chilladv",
+                    "#hide_catfish",
+                    "#pm_quangcao"
+                ]
+            },
+            "skipAds": [
+                {
+                    "container": "#box-player",
+                    "skipButtons": [
+                        ".jw-skiptext",
+                        ".jw-skip"
+                    ]
+                }
+            ],
+            "disableCORS": true
+        },
+        {
+            "name": "motphim",
+            "domains": [
+                "motchill.co",
+                "motchill.at"
+            ],
+            "styles": {
+                "hiddens": [
+                    "#mp-adx-wc",
+                    ".tip-change-server",
+                    ".mp-adz",
+                    "#comment-tab",
+                    ".module_home_ads"
+                ]
+            }
+        },
+        {
+            "name": "fmovies",
+            "domains": [
+                "fmovies.co"
+            ],
+            "styles": {
+                "hiddens": [
+                    ".ads"
+                ]
+            },
+            "block":[
+                "cdn.vidsrc.stream|d36zfztxfflmqo.cloudfront.net"
+            ]
+        },
+        {
+            "name": "facebook",
+            "domains": [
+                "www.facebook.com",
+                "m.facebook.com",
+                "mbasic.facebook.com"
+            ],
+            "styles": {
+                "hiddens": [
+                    "div[data-nosnippet]","div.__fb-light-mode:has(div[role='dialog'])",
+                    "[data-comp-id='22222']"
+                ]
+            }
+        },
+        {
+            "name": "y2mate_com",
+            "domains": [
+                "www.y2mate.com"
+            ],
+            "remoteCss": "a.btn-success.btn-file[target=_blank]{pointer-events:auto !important}",
+            "styles": {
+                "hiddens": [
+                    "html > iframe, html > div"
+                ]
+            },
+            "adElements":[
+                "html > iframe, html > div"
+            ]
+
+        },
+        {
+            "name": "y2mate_is",
+            "domains": [
+                "y2mate.is"
+            ],
+            "styles": {                
+                "hiddens": [
+                    "#adblockMessageVideo", "#adblockMessageAudio"
+                ]
+            },
+            "js": ["y2mate_is/script.js"]
+        }
+    ],
+    "block_sites": [
+        "google-analytics.com|googlesyndication.com|analytics.google.com|googleadservices.com",
+        "ads.servenobid.com|amazon-adsystem.com|ads.servenobid.com",
+        "cdn.apicdn72.one|facebook.net|doubleclick.net|adswizz.com",
+        "vads.net.vn|admicro.vn|surfcountor.com|bidgear.com|quangcao.*",
+        "eclick.vn|cntqk.com|genmonet.com|cdnstoremedia.com|smartadserver.com",
+        "steepto.com|mgid.com|gliacloud.com|aj1559.online|taboola.com",
+        "ads.pubmatic.com|amcdn.vn","static.xx.fbcdn.net1",
+        "orbsrv.com|trafficfactory.biz|cdn.vidsrc.stream",
+        "dmxleo.dailymotion.com"
+    ],
+    "block_urls":[
+        "^https?://.*?/devtools-detector\\.js"
+    ]
+}

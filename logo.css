@@ -1,0 +1,9 @@
+body::after{
+    content: '♻️';
+    font-size: x-large;
+    position: fixed;
+    top: 3px; right: 3px;
+    z-index: 9999;
+    opacity: 0.7;
+    pointer-events: none;
+}

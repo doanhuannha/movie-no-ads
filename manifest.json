@@ -1,0 +1,23 @@
+{
+	"name": "Movie Ads Remover",
+	"version": "3.13.0",
+	"description": "Remove runtime ads in movie websites: youtube, dailymotion, bongngotv, phimmoi, nguontv, tvhay, motphim, hoathinh3d, hhkungfu...",
+	"permissions": [
+		"tabs",
+		"activeTab",
+		"scripting",
+		"declarativeNetRequest",
+		"declarativeNetRequestWithHostAccess"
+	],
+	"host_permissions": [
+		"<all_urls>"
+	],
+	"manifest_version": 3,
+	"action": {},
+	"background": {
+		"service_worker": "service_worker.js"
+	},
+	"icons": {
+		"128": "logo.png"
+	}
+}
