@@ -91,7 +91,7 @@ const UtilityTool = {
         else return this.isInDOM(el.parentElement);
     },
     ensureInDOM: function (el, retry) {
-        if (UtilityTool.isInDOM(el)) {
+        if (this.isInDOM(el)) {
             setTimeout((p) => UtilityTool.ensureInDOM(p.el, p.retry), 100, { el, retry });
         }
         else {
