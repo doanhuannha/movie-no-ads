@@ -74,16 +74,25 @@ const HtmlMonitor = {
     }
 };
 const UtilityTool = {
-    waitFor: function (check, callback, arg) {
-        new Promise((resolve, reject) => {
-            if (check(arg)) resolve({ callback, arg });
-            else reject({ check, callback, arg });
-
-        }).then((n) => {
-            n.callback(n.arg);
-        }).catch((r) => {
-            this.waitFor(r.check, r.callback, r.arg);
-        });
+    delay: async function (ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    },
+    waitFor: async function (check, callback, arg, waitId) {
+        if (!waitId) {
+            waitId = 'waitForTime_' + this.newId();
+            this[waitId] = new Date().getTime();
+        }
+        if (check(arg)) {
+            if (callback) await callback({ callback, arg });
+            else return new Promise(ok => ok(arg));
+        }
+        else {
+            if (new Date().getTime() - this[waitId] < 13000) return await this.delay(500).then(() => this.waitFor(check, callback, arg, waitId));
+            else {
+                delete this[waitId];
+                return new Promise((_, fail) => fail(arg));
+            }
+        }
     },
     isInDOM: function (el) {
         if (el.tagName == 'HTML') return true;
@@ -234,6 +243,13 @@ const UtilityTool = {
             .catch(() => { return null; });
         if (r === null) r = await UtilityTool.sendMessage(msg);
         return r;
+    },
+    findParent: function(el, selector){
+        if(el.parentElement){
+            if(el.parentElement.matches(selector)) return el.parentElement;
+            else return this.findParent(el.parentElement, selector);
+        }
+        else return null;
     }
 };
 
