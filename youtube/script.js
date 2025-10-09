@@ -168,8 +168,8 @@ const Ytb = {
             case 'mobile': enable = JSON.parse(localStorage['yt-html5-player-modules::subtitlesModuleData::module-enabled']); break;
             default: enable = JSON.parse(localStorage['yt-player-sticky-caption']).data; break;
         }
-
-        this.lastCaptionState = (enable=='true');
+        if(enable === undefined) this.lastCaptionState = undefined;
+        else this.lastCaptionState =  (enable===true) || ((enable.toString())=='true');
         console.log('[Movie-No-Ads][YTB] storage value', this.lastCaptionState);
         return enable;
     },
