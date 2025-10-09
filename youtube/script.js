@@ -70,8 +70,11 @@ UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, ski
                     video.myAutoPlay = true;
                     container.addEventListener('click', function (e) {
                         Ytb.userActions = true;
-                        Ytb.lastExpectedCaptionState = Ytb.getExpectedCaptionState();
+                        Ytb.recordCaptionState();
                         setTimeout(function(){Ytb.userActions = false;}, 500);
+                    });
+                    video.addEventListener('play', function (e) {
+                        Ytb.restoreCaptionState();
                     });
                     video.addEventListener('pause', function (e) {
                         if (Ytb.userActions === false && video.duration != video.currentTime) {
@@ -157,16 +160,17 @@ UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, ski
 const Ytb = {
     userActions: false,
     runMode: location.href.startsWith('https://www.youtube.com/tv') ? 'tv' : location.href.startsWith('https://m.youtube.com') ? 'mobile' : 'standard',
-    lastExpectedCaptionState: false,
-    getExpectedCaptionState: function(){
-        var enable = false;
+    lastCaptionState: undefined,
+    recordCaptionState: function(){
+        var enable = undefined;
         switch(this.runMode){
             case 'tv':
             case 'mobile': enable = JSON.parse(localStorage['yt-html5-player-modules::subtitlesModuleData::module-enabled']); break;
             default: enable = JSON.parse(localStorage['yt-player-sticky-caption']).data; break;
         }
-        //var curValue = localStorage['.ytb-caption-enable.'];
-        console.log('[Movie-No-Ads][YTB] storage value', enable);
+
+        this.lastCaptionState = (enable=='true');
+        console.log('[Movie-No-Ads][YTB] storage value', this.lastCaptionState);
         return enable;
     },
     getCaptionButton: function(){
@@ -207,8 +211,8 @@ const Ytb = {
         }
     },
     restoreCaptionState: function(){
-        console.log('[Movie-No-Ads][YTB] restore subtitle state');
-        if(this.readCurrentCaptionState()!=this.getExpectedCaptionState()){
+        console.log('[Movie-No-Ads][YTB] restore subtitle state', this.readCurrentCaptionState(), this.lastCaptionState);
+        if(this.lastCaptionState!=undefined &&  this.readCurrentCaptionState()!=this.lastCaptionState){
             this.toggleCaptionState();
         }
 
