@@ -1,5 +1,5 @@
 {
-    "version":"2025.02.15",
+    "version": "2025.09.26",
     "movie_sites": [
         {
             "name": "test",
@@ -13,13 +13,23 @@
             "adElements": [
                 "img"
             ],
-            "remoteCss": "http://dev-world.net/res/css/main.css"
+            "remoteCss": "http://dev-world.net/res/css/main.css",
+            "js": null,
+            "styles": null,
+            "block_all_excepts": null,
+            "skipAds": null,
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "youtubeTV",
             "domains": [
                 "www.youtube.com/tv"
             ],
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
             "js": [
                 "youtube/script.js"
             ],
@@ -45,7 +55,7 @@
                     "ytlr-mealbar-promo-renderer"
                 ]
             },
-            "block_all_excepts":[
+            "block_all_excepts": [
                 "googlevideo.com",
                 "dev-world.net"
             ],
@@ -56,19 +66,25 @@
                         ".ad-showing"
                     ],
                     "skipButtons": [
-                        ".ytp-ad-skip-button",".ytp-ad-skip-button-modern"
+                        ".ytp-ad-skip-button",
+                        ".ytp-ad-skip-button-modern"
                     ]
                 }
             ],
-            "extras":{
+            "extras": {
                 "fakeAdVidUrl": "https://dev-world.net/photo/resources/vid/bg.webm"
-            }
+            },
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "youtubeM",
             "domains": [
                 "m.youtube.com"
             ],
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
             "js": [
                 "youtube/script.js"
             ],
@@ -91,7 +107,7 @@
                     "yt-mealbar-promo-renderer"
                 ]
             },
-            "block_all_excepts":[
+            "block_all_excepts": [
                 "googlevideo.com"
             ],
             "skipAds": [
@@ -101,19 +117,25 @@
                         ".ad-showing"
                     ],
                     "skipButtons": [
-                        ".ytp-ad-skip-button",".ytp-ad-skip-button-modern"
+                        ".ytp-ad-skip-button",
+                        ".ytp-ad-skip-button-modern"
                     ]
                 }
             ],
-            "extras":{
+            "extras": {
                 "fakeAdVidUrl": "https://dev-world.net/photo/resources/vid/bg.webm"
-            }
+            },
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "youtube",
             "domains": [
                 "www.youtube.com"
             ],
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
             "js": [
                 "youtube/script.js"
             ],
@@ -139,7 +161,7 @@
                     ".ytp-suggested-action"
                 ]
             },
-            
+            "block_all_excepts": null,
             "skipAds": [
                 {
                     "container": "ytd-app",
@@ -147,13 +169,16 @@
                         ".ad-showing"
                     ],
                     "skipButtons": [
-                        ".ytp-ad-skip-button",".ytp-ad-skip-button-modern"
+                        ".ytp-ad-skip-button",
+                        ".ytp-ad-skip-button-modern"
                     ]
                 }
             ],
-            "extras":{
+            "extras": {
                 "fakeAdVidUrl": "https://dev-world.net/photo/resources/vid/bg.webm"
-            }
+            },
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "dailymotion",
@@ -161,21 +186,23 @@
                 "dailymotion.com",
                 "www.dailymotion.com"
             ],
-            "styles":{
-                "hiddens":[
-                    "div[class^=DisplayAd__adContainer]",
-                    "div[class^=VideoInfo__videoInfoDAContainer]",
-                    "div[class*=NewWatchingDiscovery__adSection]",
-                    ".ttx-lb"]
-            },
+            "matches": [
+                "*://dailymotion.com/*"
+            ],
+            "adElements": null,
             "remoteCss": "div[class^=CookiePopup][role=dialog] {opacity: 0 !important,left: -1000px !important;top: -1000px !important;}",
             "js": [
                 "dailymotion/script.js"
             ],
-            "matches": [
-                "*://dailymotion.com/*"
-            ],
-            "block_all_excepts":[
+            "styles": {
+                "hiddens": [
+                    "div[class^=DisplayAd__adContainer]",
+                    "div[class^=VideoInfo__videoInfoDAContainer]",
+                    "div[class*=NewWatchingDiscovery__adSection]",
+                    ".ttx-lb"
+                ]
+            },
+            "block_all_excepts": [
                 "dmcdn.net"
             ],
             "skipAds": [
@@ -188,7 +215,10 @@
                         ".controls_ad button.ad_button"
                     ]
                 }
-            ]
+            ],
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "nguontv",
@@ -201,6 +231,12 @@
                 "nguontvc.com",
                 "nguontvd.com"
             ],
+            "matches": null,
+            "adElements": [
+                "#antiAdblock"
+            ],
+            "remoteCss": null,
+            "js": null,
             "styles": {
                 "hiddens": [
                     "div#antiAdblock",
@@ -213,18 +249,20 @@
                     "iframe ~ *"
                 ]
             },
-            "adElements": [
-                "#antiAdblock"
-            ],
+            "block_all_excepts": null,
             "skipAds": [
                 {
                     "container": "#playerBoxEmbed",
+                    "adVideos": null,
                     "skipButtons": [
                         ".jw-skip",
                         ".jw-skiptext"
                     ]
                 }
-            ]
+            ],
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "bongngotv",
@@ -233,18 +271,33 @@
                 "bongngotv1.net",
                 "bongngotv2.net"
             ],
-            "styles":{
-                "hiddens":["#player + div",".afs_ads",".preload-banner",".ab1",".ads"]
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
+            "js": null,
+            "styles": {
+                "hiddens": [
+                    "#player + div",
+                    ".afs_ads",
+                    ".preload-banner",
+                    ".ab1",
+                    ".ads"
+                ]
             },
+            "block_all_excepts": null,
             "skipAds": [
                 {
                     "container": "#box-player",
+                    "adVideos": null,
                     "skipButtons": [
                         ".jw-skip",
                         ".jw-skiptext"
                     ]
                 }
-            ]
+            ],
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "hhkungfu",
@@ -256,14 +309,30 @@
                 "hhkungfu.team",
                 "hhkungfu.city",
                 "hhkungfu.cool",
-                "hhkungfu.chat"
+                "hhkungfu.chat",
+                "hhkungfu.plus",
+                "hhkungfu.host"
             ],
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
+            "js": null,
             "styles": {
                 "hiddens": [
-                    "#content div[style='min-height: 250px']","#rightads",".a--d-wrapper",".text-center iframe",
-                    "main > h4", "main > h4 + div", "main > h4 + div + div"
+                    "#content div[style=\u0027min-height: 250px\u0027]",
+                    "#rightads",
+                    ".a--d-wrapper",
+                    ".text-center iframe",
+                    "main \u003e h4",
+                    "main \u003e h4 + div",
+                    "main \u003e h4 + div + div"
                 ]
-            }
+            },
+            "block_all_excepts": null,
+            "skipAds": null,
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "hh3dhay",
@@ -271,36 +340,63 @@
                 "tram3d.tv",
                 "hh3dhay.life"
             ],
+            "matches": null,
+            "adElements": [
+                "body + iframe, body + div"
+            ],
+            "remoteCss": null,
+            "js": null,
             "styles": {
                 "hiddens": [
-                    "#player + div",".afs_ads",".preload-banner",".ab1",".ads",
-                    ".float-ck-center-lt",".textwidget.custom-html-widget", 
-                    "#main-contents > img", "html > iframe", "div[class='text-center']"
+                    "#player + div",
+                    ".afs_ads",
+                    ".preload-banner",
+                    ".ab1",
+                    ".ads",
+                    ".float-ck-center-lt",
+                    ".textwidget.custom-html-widget",
+                    "#main-contents \u003e img",
+                    "html \u003e iframe",
+                    "div[class=\u0027text-center\u0027]"
                 ]
             },
-            "adElements":["body + iframe, body + div"]
+            "block_all_excepts": null,
+            "skipAds": null,
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "hoathinh3d",
             "domains": [
-                "hoathinh3d.com",
-                "hoathinh3d.io",
-                "hoathinh3d.run",
-                "hoathinh3d.video",
-                "hoathinh3d.vin",
-                "hoathinh3d.top",
-                "hoathinh3d.mobi",
                 "hoathinh3d.sh",
                 "hoathinh3d.xyz",
                 "hoathinh3d.live",
-                "hoathinh3d.moe"
+                "hoathinh3d.moe",
+                "hoathinh3d.baby",
+                "hoathinh3d.mom",
+                "hoathinh3d.dad",
+                "hoathinh3d.team"
             ],
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
+            "js": null,
             "styles": {
                 "hiddens": [
-                    "#player + div",".afs_ads",".preload-banner",".ab1",".ads",
-                    "iframe[src*='facebook.com']"
+                    "#player + div",
+                    ".afs_ads",
+                    ".preload-banner",
+                    ".ab1",
+                    ".ads",
+                    "iframe[src*=\u0027facebook.com\u0027]"
                 ]
-            }
+            },
+            "block_all_excepts": null,
+            "skipAds": null,
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "hhpanda",
@@ -308,38 +404,67 @@
                 "hhpanda.tv",
                 "hhpanda.love",
                 "hhpanda.live",
-                "hhpanda.my"
+                "hhpanda.my",
+                "hhpanda.dev",
+                "hhpanda.ch",
+                "hhpanda.id",
+                "hhpanda.sh",
+                "hhpanda.now",
+                "hhpanda.ee",
+                "hhpanda.baby",
+                "hhpanda.win",
+                "hhpanda.gg"
             ],
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
+            "js": null,
             "styles": {
                 "hiddens": [
-                    "#xs-addd0",".jw-logo.jw-logo-top-right",
-                    ".jw-text-track-display", ".jw-text-track-container"
-
+                    "#xs-addd0",
+                    ".jw-logo.jw-logo-top-right",
+                    ".jw-text-track-display",
+                    ".jw-text-track-container",
+                    ".aanetwork-ads-box"
                 ]
             },
+            "block_all_excepts": null,
             "skipAds": [
                 {
                     "container": "#jwplayer",
+                    "adVideos": null,
                     "skipButtons": [
                         ".jw-skiptext",
                         ".jw-skip"
                     ]
                 }
-            ]
+            ],
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "phimmoi",
             "domains": [
                 "phimmoiplus.net",
-                "phimmoichill.com",
+                "phimmoichill.bot",
                 "phimmoichill.io",
                 "phimmoichill.biz",
                 "phimmoichill.tube",
-				"phimmoichill.bio",
-                "phimmoichill.ac",
-                "phimmoichill.bar"
+                "phimmoichill.bio",
+                "phimmoichill.ceo",
+                "phimmoichill.bar",
+                "phimmoichill.blog",
+                "phimmoichill.love",
+                "phimmoichill.best",
+                "phimmoichill.bz",
+                "phimmoichill.dev",
+                "phimmoichill.date"
             ],
+            "matches": null,
+            "adElements": null,
             "remoteCss": "#box-player.box-player {background-image: none !important}",
+            "js": null,
             "styles": {
                 "hiddens": [
                     "#catfishs_content",
@@ -348,16 +473,20 @@
                     "#pm_quangcao"
                 ]
             },
+            "block_all_excepts": null,
             "skipAds": [
                 {
                     "container": "#box-player",
+                    "adVideos": null,
                     "skipButtons": [
                         ".jw-skiptext",
                         ".jw-skip"
                     ]
                 }
             ],
-            "disableCORS": true
+            "extras": null,
+            "disableCORS": true,
+            "block": null
         },
         {
             "name": "motphim",
@@ -365,6 +494,10 @@
                 "motchill.co",
                 "motchill.at"
             ],
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
+            "js": null,
             "styles": {
                 "hiddens": [
                     "#mp-adx-wc",
@@ -373,19 +506,32 @@
                     "#comment-tab",
                     ".module_home_ads"
                 ]
-            }
+            },
+            "block_all_excepts": null,
+            "skipAds": null,
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "fmovies",
             "domains": [
                 "fmovies.co"
             ],
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
+            "js": null,
             "styles": {
                 "hiddens": [
                     ".ads"
                 ]
             },
-            "block":[
+            "block_all_excepts": null,
+            "skipAds": null,
+            "extras": null,
+            "disableCORS": null,
+            "block": [
                 "cdn.vidsrc.stream|d36zfztxfflmqo.cloudfront.net"
             ]
         },
@@ -396,40 +542,67 @@
                 "m.facebook.com",
                 "mbasic.facebook.com"
             ],
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
+            "js": null,
             "styles": {
                 "hiddens": [
-                    "div[data-nosnippet]","div.__fb-light-mode:has(div[role='dialog'])",
-                    "[data-comp-id='22222']"
+                    "div[data-nosnippet]",
+                    "div.__fb-light-mode:has(div[role=\u0027dialog\u0027])",
+                    "[data-comp-id=\u002722222\u0027]"
                 ]
-            }
+            },
+            "block_all_excepts": null,
+            "skipAds": null,
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "y2mate_com",
             "domains": [
                 "www.y2mate.com"
             ],
+            "matches": null,
+            "adElements": [
+                "html \u003e iframe, html \u003e div"
+            ],
             "remoteCss": "a.btn-success.btn-file[target=_blank]{pointer-events:auto !important}",
+            "js": null,
             "styles": {
                 "hiddens": [
-                    "html > iframe, html > div"
+                    "html \u003e iframe, html \u003e div"
                 ]
             },
-            "adElements":[
-                "html > iframe, html > div"
-            ]
-
+            "block_all_excepts": null,
+            "skipAds": null,
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         },
         {
             "name": "y2mate_is",
             "domains": [
                 "y2mate.is"
             ],
-            "styles": {                
+            "matches": null,
+            "adElements": null,
+            "remoteCss": null,
+            "js": [
+                "y2mate_is/script.js"
+            ],
+            "styles": {
                 "hiddens": [
-                    "#adblockMessageVideo", "#adblockMessageAudio"
+                    "#adblockMessageVideo",
+                    "#adblockMessageAudio"
                 ]
             },
-            "js": ["y2mate_is/script.js"]
+            "block_all_excepts": null,
+            "skipAds": null,
+            "extras": null,
+            "disableCORS": null,
+            "block": null
         }
     ],
     "block_sites": [
@@ -439,11 +612,12 @@
         "vads.net.vn|admicro.vn|surfcountor.com|bidgear.com|quangcao.*",
         "eclick.vn|cntqk.com|genmonet.com|cdnstoremedia.com|smartadserver.com",
         "steepto.com|mgid.com|gliacloud.com|aj1559.online|taboola.com",
-        "ads.pubmatic.com|amcdn.vn","static.xx.fbcdn.net1",
+        "ads.pubmatic.com|amcdn.vn",
+        "static.xx.fbcdn.net",
         "orbsrv.com|trafficfactory.biz|cdn.vidsrc.stream",
         "dmxleo.dailymotion.com"
     ],
-    "block_urls":[
+    "block_urls": [
         "^https?://.*?/devtools-detector\\.js"
     ]
 }

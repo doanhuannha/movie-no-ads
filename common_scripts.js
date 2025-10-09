@@ -1,18 +1,21 @@
-const wait = async (milliseconds) => {
-    return new Promise(resolve => {
-        setTimeout(resolve, milliseconds);
-    });
-};
 
-const retry = async (promise, delay = 100, maxRetry = 3, retryCnt = 1) => {
-    let r = await promise()
-        .then(r => r || {})
-        .catch(ex => { return { retry: true, ex }; });
-    if (r && r.retry) {
-        if (retryCnt < maxRetry) r = await wait(delay).then(() => retry(promise, delay, maxRetry, ++retryCnt));
-        else return Promise.reject(r.ex);
+
+const retry = async function (act, delay = 1000, maxRetry = 3, tryCnt = 1) {
+    let r = act(tryCnt);
+    const shouldRetry = tryCnt < maxRetry;
+    if (r instanceof Promise) {
+        let rr = await r.then(arg => arg || {})
+            .catch(ex => { return { retry: true, ex }; });
+        if (rr && rr.retry) {
+            if (!shouldRetry) return Promise.reject(rr.ex);
+        }
+        else return rr;
     }
-    return r;
+    else {
+        if (r) return new Promise(ok => ok(tryCnt));
+        else if (!shouldRetry) return new Promise((_, fail) => fail(tryCnt));
+    }
+    if (shouldRetry) return await UtilityTool.delay(delay).then(() => retry(act, delay, maxRetry, ++tryCnt));
 };
 const HtmlMonitor = {
     _observer: null,
@@ -74,8 +77,14 @@ const HtmlMonitor = {
     }
 };
 const UtilityTool = {
-    delay: async function (ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    delay: async (ms) => {
+        if (!this.setTimeout) {
+            var frame = document.createElement('iframe');
+            this.setTimeout = frame.contentWindow.setTimeout;
+        }
+        return new Promise(resolve => {
+            this.setTimeout(resolve, ms);
+        });
     },
     waitFor: async function (check, callback, arg, waitId) {
         if (!waitId) {

@@ -70,6 +70,7 @@ UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, ski
                     video.myAutoPlay = true;
                     container.addEventListener('click', function (e) {
                         Ytb.userActions = true;
+                        Ytb.lastExpectedCaptionState = Ytb.getExpectedCaptionState();
                         setTimeout(function(){Ytb.userActions = false;}, 500);
                     });
                     video.addEventListener('pause', function (e) {
@@ -125,6 +126,7 @@ UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, ski
                         }).then(() => {
                             console.log('[Movie-No-Ads] Skip ad successfull');
                             video.lastAdSrc = null;
+                            Ytb.restoreCaptionState();
                         }).catch(ex => {
                             console.log('[Movie-No-Ads] Error on skip ad vid', ex);
                         });
@@ -154,55 +156,62 @@ UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, ski
 };
 const Ytb = {
     userActions: false,
-    isOnTV: location.href.startsWith('https://www.youtube.com/tv'),
-    lastCaptionState: false,
+    runMode: location.href.startsWith('https://www.youtube.com/tv') ? 'tv' : location.href.startsWith('https://m.youtube.com') ? 'mobile' : 'standard',
+    lastExpectedCaptionState: false,
+    getExpectedCaptionState: function(){
+        var enable = false;
+        switch(this.runMode){
+            case 'tv':
+            case 'mobile': enable = JSON.parse(localStorage['yt-html5-player-modules::subtitlesModuleData::module-enabled']); break;
+            default: enable = JSON.parse(localStorage['yt-player-sticky-caption']).data; break;
+        }
+        //var curValue = localStorage['.ytb-caption-enable.'];
+        console.log('[Movie-No-Ads][YTB] storage value', enable);
+        return enable;
+    },
+    getCaptionButton: function(){
+        let bt = null;
+        switch(this.runMode){
+            case 'tv':{
+                bt = document.querySelector('yt-icon.ytContribIconClosedCaption');
+                if(bt) bt = UtilityTool.findParent(bt, 'ytlr-button');
+            } break;
+            case 'mobile':{
+                bt = document.querySelector('button.ytmClosedCaptioningButtonButton');
+            } break;
+            default:{
+                bt = document.querySelector('button.ytp-subtitles-button');
+            } break;
+        }
+        return bt;
+    },
     readCurrentCaptionState: function(){
-        if(this.isOnTV){
-            let bt = document.querySelector('yt-icon.ytContribIconClosedCaption');
-            if(bt){
-                bt = UtilityTool.findParent(bt, 'ytlr-button');
-                if(bt) return bt.matches('ytlr-button[aria-pressed="true"]');
-            } 
-        }
-        else{
-            let bt = document.querySelector('button.ytp-subtitles-button');
-            if(bt) return bt.matches('button[aria-pressed="true"]');
-        }
-        return undefined;
+        const bt = this.getCaptionButton();
+        if(bt) return bt.matches('[aria-pressed="true"]');
+        else return undefined;
     },
     toggleCaptionState: function(){
-        if(this.isOnTV){
-            let bt = document.querySelector('yt-icon.ytContribIconClosedCaption');
-            if(bt){
-                bt = UtilityTool.findParent(bt, 'ytlr-button');
-                if(bt){
-                    let evt = null;
-                    evt = new Event('pointerup');
-                    bt.dispatchEvent(evt);
-                    evt = new Event('mouseup');
-                    bt.dispatchEvent(evt);
-                }
-                else{
-                    console.log('[Movie-No-Ads][YTB] not found bt');
-                }
-                
-            } 
+        const bt = this.getCaptionButton();
+        if(bt) switch(this.runMode){
+            case 'tv': {
+                evt = new Event('mouseup');
+                bt.dispatchEvent(evt);
+            } break;
+            case 'mobile': {
+                evt = new Event('pointerup');
+                bt.dispatchEvent(evt);
+            } break;
+            default: {
+                bt.click();
+            } break;
         }
-        else{
-            let bt = document.querySelector('button.ytp-subtitles-button');
-            if(bt) bt.click();
-        }
-        this.lastCaptionState = this.readCurrentCaptionState();
     },
     restoreCaptionState: function(){
-        console.log('[Movie-No-Ads][YTB] enable subtitle', location.href);
-        if(this.readCurrentCaptionState()===false){
+        console.log('[Movie-No-Ads][YTB] restore subtitle state');
+        if(this.readCurrentCaptionState()!=this.getExpectedCaptionState()){
             this.toggleCaptionState();
         }
 
     }
 };
 console.log('[Movie-No-Ads][YTB] Script registered!');
-setInterval(()=>{
-    //Ytb.restoreCaptionState();
-}, 5000);
