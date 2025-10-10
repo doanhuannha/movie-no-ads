@@ -77,6 +77,10 @@ const HtmlMonitor = {
     }
 };
 const UtilityTool = {
+    newId: function () {
+        return Date.now().toString(18) + Math.random().toString(36);
+        //return crypto.randomUUID().replaceAll('-', '');
+    },
     delay: async (ms) => {
         if (!this.setTimeout) {
             var frame = document.createElement('iframe');
@@ -86,7 +90,8 @@ const UtilityTool = {
             this.setTimeout(resolve, ms);
         });
     },
-    waitFor: async function (check, callback, arg, waitId) {
+    waitFor: async function (check, callback, arg, timeout, waitId) {
+        if(!timeout) timeout = 7000;
         if (!waitId) {
             waitId = 'waitForTime_' + this.newId();
             this[waitId] = new Date().getTime();
@@ -96,7 +101,7 @@ const UtilityTool = {
             else return new Promise(ok => ok(arg));
         }
         else {
-            if (new Date().getTime() - this[waitId] < 13000) return await this.delay(500).then(() => this.waitFor(check, callback, arg, waitId));
+            if (new Date().getTime() - this[waitId] < timeout) return await this.delay(500).then(() => this.waitFor(check, callback, arg, timeout, waitId));
             else {
                 delete this[waitId];
                 return new Promise((_, fail) => fail(arg));
@@ -254,10 +259,13 @@ const UtilityTool = {
         return r;
     },
     findParent: function(el, selector){
-        if(el.parentElement){
-            if(el.parentElement.matches(selector)) return el.parentElement;
-            else return this.findParent(el.parentElement, selector);
-        }
+        if(el.matches(selector)) return el;
+        else if(el.parentElement) return this.findParent(el.parentElement, selector);
+        else return null;
+    },
+    findChild: function(el, selector){
+        if(el.matches(selector)) return el;
+        if(el.children) for(var child of el.children) return this.findChild(child, selector);
         else return null;
     }
 };
