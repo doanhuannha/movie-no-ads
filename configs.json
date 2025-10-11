@@ -52,7 +52,8 @@
                     "yt-mealbar-promo-renderer",
                     "ytlr-endscreen-element-renderer",
                     ".ytlr-endscreen-renderer__endscreen-indicator",
-                    "ytlr-mealbar-promo-renderer"
+                    "ytlr-mealbar-promo-renderer",
+                    "div.ytLrEndscreenRendererEndscreenIndicator"
                 ]
             },
             "block_all_excepts": [

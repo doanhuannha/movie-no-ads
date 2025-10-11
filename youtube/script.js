@@ -74,7 +74,8 @@ UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, ski
                     container.addEventListener('click', function (e) {
                         Ytb.userActions = true;
                         if(UtilityTool.findChild(e.target, '.ytContribIconClosedCaption,.ytmClosedCaptioningButtonButton,.ytp-subtitles-button')) {
-                            UtilityTool.delay(500).then(()=>Ytb.recordCaptionState());
+                            
+                            if(e.pointerId>0) UtilityTool.delay(500).then(()=>Ytb.recordCaptionState());
                         }
                         
                         UtilityTool.delay(500).then(function(){Ytb.userActions = false;});
@@ -165,10 +166,21 @@ const Ytb = {
     userActions: false,
     runMode: location.href.startsWith('https://www.youtube.com/tv') ? 'tv' : location.href.startsWith('https://m.youtube.com') ? 'mobile' : 'standard',
     lastCaptionState: undefined,
-    recordCaptionState: function(){
-        this.lastCaptionState = this.readCaptionStateData();
-        
+    getLastCaptionState: function(){
+        if(this.lastCaptionState==undefined){
+            var enable = localStorage['.ytp-caption.'];
+            if(enable!=undefined) {
+                enable = JSON.parse(enable);
+                this.lastCaptionState = (enable===true) || ((enable.toString())=='true');
+            }
+        }
         return this.lastCaptionState;
+    },
+    recordCaptionState: function(){
+        
+        this.lastCaptionState = this.readCaptionStateData();
+        localStorage.setItem('.ytp-caption.', this.lastCaptionState);
+        console.log('[Movie-No-Ads][YTB] caption state recorded', this.lastCaptionState);
     },
     readCaptionStateData: function(){
         var enable = undefined;
@@ -177,11 +189,12 @@ const Ytb = {
             case 'mobile': enable = JSON.parse(localStorage['yt-html5-player-modules::subtitlesModuleData::module-enabled']); break;
             default: enable = JSON.parse(localStorage['yt-player-sticky-caption']).data; break;
         }
-        if(enable === undefined) this.lastCaptionState = undefined;
-        enable =  (enable===true) || ((enable.toString())=='true');
+        if(enable === undefined) this.getLastCaptionState() = undefined;
+        enable = (enable===true) || ((enable.toString())=='true');
         return enable;
     },
     getCaptionButton: function(){
+        document.body.focus();
         document.body.click();
         let bt = null;
         switch(this.runMode){
@@ -198,23 +211,22 @@ const Ytb = {
         }
         return bt;
     },
-    readCurrentCaptionStateButton: function(){
-        const bt = this.getCaptionButton();
+    readCurrentCaptionStateButton: function(bt){
+        if(!bt) bt = this.getCaptionButton();
         if(bt) return bt.matches('[aria-pressed="true"]');
         else return undefined;
     },
-    setCaptionState:async function(enable){
+    setCaptionState:async function(enable, bt){
         
         //console.log('[Movie-No-Ads][YTB] toggle caption button', 'expected='+enable,'button='+this.readCurrentCaptionStateButton(), 'data='+this.readCaptionStateData());
         if(enable==undefined) return;
-        if(this.readCurrentCaptionStateButton()==enable || this.readCaptionStateData()==enable)return;
-        
-        const bt = this.getCaptionButton();
+        if(this.readCurrentCaptionStateButton(bt)==enable && this.readCaptionStateData()==enable)return;
+        console.log(`[Movie-No-Ads][YTB] ${enable?'enable':'disable'} caption`);
+        if(!bt) bt = this.getCaptionButton();
         if(bt) switch(this.runMode){
             case 'tv': {
                 evt = new Event('mouseup');
                 bt.dispatchEvent(evt);
-                bt.click();
             } break;
             case 'mobile': {
                 evt = new Event('pointerup');
@@ -225,26 +237,13 @@ const Ytb = {
                 bt.click();
             } break;
         }
-        await UtilityTool.delay(1000).then(()=>this.setCaptionState(enable));
     },
     restoreCaptionState: function () {
-        if(this.restoring) return;
-        if (this.lastCaptionState != undefined){
-            
-            this.restoring = {};
-            UtilityTool.waitFor(()=>{
-                //console.log('[Movie-No-Ads][YTB] wait for caption button');
-                return this.readCurrentCaptionStateButton()!=undefined;
-            }).then(async ()=>{
-                await this.setCaptionState(this.lastCaptionState);
-                this.restoring = null;
-            }).catch(()=>{
-                this.restoring = null;
-            });
+        if (this.getLastCaptionState() != undefined){
+            const bt = this.getCaptionButton();
+            if(!bt) console.log('[Movie-No-Ads][YTB] Unable to find caption button');
+            if(this.readCurrentCaptionStateButton(bt)!=undefined) this.setCaptionState(this.getLastCaptionState(), bt);
         }
-        
-        
-
     }
 };
-console.log('[Movie-No-Ads][YTB] Script registered!');
+console.log('[Movie-No-Ads][YTB] Script registered!', Ytb.getLastCaptionState());
