@@ -185,14 +185,21 @@ const Ytb = {
         console.log('[Movie-No-Ads][YTB] caption state recorded', this.lastCaptionState);
     },
     readCaptionStateData: function(){
-        var enable = undefined;
-        switch(this.runMode){
+        let enable = undefined;
+        switch (this.runMode) {
             case 'tv':
-            case 'mobile': enable = JSON.parse(localStorage['yt-html5-player-modules::subtitlesModuleData::module-enabled']); break;
-            default: enable = JSON.parse(localStorage['yt-player-sticky-caption']).data; break;
+            case 'mobile': {
+                enable = localStorage['yt-html5-player-modules::subtitlesModuleData::module-enabled'];
+                if (enable != undefined) enable = JSON.parse(enable);
+
+            } break;
+            default: {
+                enable = localStorage['yt-player-sticky-caption'];
+                if (enable != undefined) enable = JSON.parse(enable).data;
+            } break;
         }
-        if(enable === undefined) this.getLastCaptionState() = undefined;
-        enable = (enable===true) || ((enable.toString())=='true');
+        if(enable === undefined) this.lastCaptionState = undefined;
+        else enable = (enable===true) || ((enable.toString())=='true');
         return enable;
     },
     getCaptionButton: function(){
@@ -234,7 +241,6 @@ const Ytb = {
         }
     },
     togglePlayingOnTv: async function(){
-        console.log('[Movie-No-Ads][YTB] Try to pause');
         var bt = document.querySelector('ytlr-watch-page');
         if(bt){
             let evt = new Event('mousedown');
@@ -284,9 +290,12 @@ const Ytb = {
                 } 
             } break;
             case 'mobile': {
+                let evt = new Event('pointerdown');
+                bt.dispatchEvent(evt);
+                await UtilityTool.delay(200);
+
                 evt = new Event('pointerup');
                 bt.dispatchEvent(evt);
-                bt.click();
             } break;
             default: {
                 bt.click();
