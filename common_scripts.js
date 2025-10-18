@@ -97,7 +97,7 @@ const UtilityTool = {
             this[waitId] = new Date().getTime();
         }
         if (check(arg)) {
-            if (callback) await callback({ callback, arg });
+            if (callback) await callback(arg);
             else return new Promise(ok => ok(arg));
         }
         else {
