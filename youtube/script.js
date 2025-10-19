@@ -25,7 +25,6 @@ HtmlMonitor.domReady(() => {
         Ytb.restoreCaptionState();
         //console.log('[YTB] Subtitle',localStorage['yt-player-sticky-caption'],  localStorage['yt-html5-player-modules::subtitlesModuleData::module-enabled']);
     }, 1000);
-
     HtmlMonitor.monitorElement('yt-confirm-dialog-renderer', document.body).then(dialog => {
         UtilityTool.waitFor((arg) => {
             return arg.innerText.trim() != '';
@@ -52,7 +51,6 @@ HtmlMonitor.domReady(() => {
             else console.log('[Movie-No-Ads][YTB] Not a continue dialog');
         }, dialog.querySelector('#scrollable'));
     });
-    
 });
 UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, skipButtonSelectors, extras) {
 
@@ -74,7 +72,7 @@ UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, ski
                     container.addEventListener('click', function (e) {
                         if (e.pointerId < 0) return;
                         Ytb.userActions = true;
-                        if(UtilityTool.findChild(e.target, '.ytContribIconClosedCaption,.ytmClosedCaptioningButtonButton,.ytp-subtitles-button')) {
+                        if(e.target.querySelector('.ytContribIconClosedCaption,.ytmClosedCaptioningButtonButton,.ytp-subtitles-button')) {
                             
                             UtilityTool.delay(500).then(()=>Ytb.recordCaptionState());
                         }
@@ -209,7 +207,7 @@ const Ytb = {
             case 'tv':{
                 bt = document.querySelector('[idomkey=TRANSPORT_CONTROLS_BUTTON_TYPE_CAPTIONS]');
                 if(bt) bt = bt.querySelector('ytlr-button');
-                if(!bt && this.captionTryCnt >= 5){
+                if (this.lastCaptionState === true && !bt && this.captionTryCnt >= 5) {
                     this.togglePlayingOnTv();
                 }
             } break;
@@ -270,7 +268,7 @@ const Ytb = {
             this.captionTryCnt = 0;
             return;
         }
-        console.log(`[Movie-No-Ads][YTB] ${enable?'enable':'disable'} caption`);
+        console.log(`[Movie-No-Ads][YTB] ${enable ? 'enable' : 'disable'} caption`);
         if(!bt) bt = this.getCaptionButton();
         if(bt) switch(this.runMode){
             case 'tv': {                
