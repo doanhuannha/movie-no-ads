@@ -1,57 +1,3 @@
-HtmlMonitor.domReady(() => {
-    console.log('[Movie-No-Ads][YTB] Looking for tag: tp-yt-paper-dialog');
-    window.setInterval(function () {
-        
-        var dialogs = document.querySelectorAll('tp-yt-paper-dialog');
-        if(dialogs) for(const dialog of dialogs) {
-            if(dialog.textContent.includes('Ad blockers violate')){
-                console.log('[Movie-No-Ads][YTB] Ad-block Dialog detected, hide it', dialog);
-                dialog.style.display = 'none';
-                dialog.remove();
-                var bg = document.querySelector('tp-yt-iron-overlay-backdrop');
-                if(bg){
-                    bg.click();
-                    bg.className = 'closed';
-                } 
-                
-            }
-            
-        }
-        var skipSurvey = document.querySelector('ytlr-skip-button-renderer');
-        if(skipSurvey){
-            console.log('[Movie-No-Ads][YTB] Survey detected! Skip...');
-            skipSurvey.click();
-        }
-        Ytb.restoreCaptionState();
-        //console.log('[YTB] Subtitle',localStorage['yt-player-sticky-caption'],  localStorage['yt-html5-player-modules::subtitlesModuleData::module-enabled']);
-    }, 1000);
-    HtmlMonitor.monitorElement('yt-confirm-dialog-renderer', document.body).then(dialog => {
-        UtilityTool.waitFor((arg) => {
-            return arg.innerText.trim() != '';
-        }, (arg) => {
-            const msgContainer = arg.querySelector('yt-formatted-string.line-text');
-            console.log('[Movie-No-Ads][YTB] Dialog detected!! Msg: ', msgContainer.innerText);
-            //if (msgContainer && msgContainer.innerText.indexOf('Video paused') >= 0) {
-            if (msgContainer) {
-                msgContainer.innerText = 'Should auto continue...';
-                console.log('[Movie-No-Ads][YTB] Try to continue playing the video');
-                retry(() => {
-                    const bt = dialog.querySelector('.yt-spec-button-shape-next');
-                    if (bt && bt.getAttribute('aria-label') == 'Yes') {
-                        console.log('[Movie-No-Ads][YTB] Continue button clicked!');
-                        bt.click();
-                        
-                        return Promise.resolve({ err: null });
-                    }
-                    else {
-                        return Promise.reject({ err: '[Movie-No-Ads][YTB] Continue button is not found', el: dialog });
-                    }
-                }, 1000).catch(e => console.log('[Movie-No-Ads][YTB] Failed to continue playing', e));
-            }
-            else console.log('[Movie-No-Ads][YTB] Not a continue dialog');
-        }, dialog.querySelector('#scrollable'));
-    });
-});
 UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, skipButtonSelectors, extras) {
 
     console.log('[Movie-No-Ads][YTB] Run overrided autoSkipAdVideo');
@@ -70,11 +16,18 @@ UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, ski
                     console.log('[Movie-No-Ads] VID Element detected', video);
                     video.myAutoPlay = true;
                     container.addEventListener('click', function (e) {
+                        console.log('[DEBUG]', e.target, e);
                         if (e.pointerId < 0) return;
                         Ytb.userActions = true;
-                        if(e.target.querySelector('.ytContribIconClosedCaption,.ytmClosedCaptioningButtonButton,.ytp-subtitles-button')) {
-                            
-                            UtilityTool.delay(500).then(()=>Ytb.recordCaptionState());
+                        
+                        let bt = UtilityTool.findParent(e.target, 'ytlr-toggle-button-renderer,ytm-closed-captioning-button,.ytp-subtitles-button');
+                        if(bt){
+                            bt = UtilityTool.findChild(bt,'.ytContribIconClosedCaption,.ytmClosedCaptioningButtonButton,.ytp-subtitles-button');
+                        }
+                        if(bt) {
+                            console.log('[DEBUG] Button Click');
+                            Ytb.skipCaptionRestore = true;
+                            UtilityTool.delay(500).then(()=>Ytb.skipCaptionRestore = null, Ytb.recordCaptionState());
                         }
                         
                         UtilityTool.delay(500).then(function(){Ytb.userActions = false;});
@@ -177,7 +130,6 @@ const Ytb = {
         return this.lastCaptionState;
     },
     recordCaptionState: function(){
-        
         this.lastCaptionState = this.readCaptionStateData();
         localStorage.setItem('.ytp-caption.', this.lastCaptionState);
         console.log('[Movie-No-Ads][YTB] caption state recorded', this.lastCaptionState);
@@ -221,7 +173,6 @@ const Ytb = {
         }
         return bt;
     },
-    
     readCurrentCaptionStateButton: function(bt){
         if(!bt) bt = this.getCaptionButton();
         if(bt) return bt.matches('[aria-pressed="true"]');
@@ -262,8 +213,8 @@ const Ytb = {
     setCaptionState:async function(enable, bt){
         
         //console.log('[Movie-No-Ads][YTB] toggle caption button', 'expected='+enable,'button='+this.readCurrentCaptionStateButton(), 'data='+this.readCaptionStateData());
-        if(enable==undefined) return;
-        if(this.readCurrentCaptionStateButton(bt)==enable && this.readCaptionStateData()==enable){
+        if (enable == undefined) return;
+        if (this.readCurrentCaptionStateButton(bt) == enable && this.readCaptionStateData() == enable) {
             console.log(`[Movie-No-Ads][YTB] Caption is set as expected`, enable);
             this.captionTryCnt = 0;
             return;
@@ -282,7 +233,9 @@ const Ytb = {
                 let watchScreen = document.querySelector('ytlr-watch-default');                
                 if(watchScreen){
                     //watchScreen.remove();
+                    
                     watchScreen.classList.replace('ytLrWatchDefaultControl','ytLrWatchDefaultIdle');
+                    
                     //let bubble = watchScreen.querySelector('ytlr-watch-metadata');
                     //if(bubble) bubble.classList.replace('ytLrWatchMetadataWarm','ytLrWatchMetadataIsMetadataHidden');
                 } 
@@ -301,6 +254,7 @@ const Ytb = {
         }
     },
     restoreCaptionState: function () {
+        if(this.skipCaptionRestore) return;
         if(!this.isCaptionAvailable()){
             console.log('[Movie-No-Ads][YTB] Caption is unavailable');
         }
@@ -315,4 +269,58 @@ const Ytb = {
 
     },
 };
+HtmlMonitor.domReady(() => {
+    console.log('[Movie-No-Ads][YTB] Looking for tag: tp-yt-paper-dialog');
+    window.setInterval(function () {
+        
+        var dialogs = document.querySelectorAll('tp-yt-paper-dialog');
+        if(dialogs) for(const dialog of dialogs) {
+            if(dialog.textContent.includes('Ad blockers violate')){
+                console.log('[Movie-No-Ads][YTB] Ad-block Dialog detected, hide it', dialog);
+                dialog.style.display = 'none';
+                dialog.remove();
+                var bg = document.querySelector('tp-yt-iron-overlay-backdrop');
+                if(bg){
+                    bg.click();
+                    bg.className = 'closed';
+                } 
+                
+            }
+            
+        }
+        var skipSurvey = document.querySelector('ytlr-skip-button-renderer');
+        if(skipSurvey){
+            console.log('[Movie-No-Ads][YTB] Survey detected! Skip...');
+            skipSurvey.click();
+        }
+        Ytb.restoreCaptionState();
+        //console.log('[YTB] Subtitle',localStorage['yt-player-sticky-caption'],  localStorage['yt-html5-player-modules::subtitlesModuleData::module-enabled']);
+    }, 1000);
+    HtmlMonitor.monitorElement('yt-confirm-dialog-renderer', document.body).then(dialog => {
+        UtilityTool.waitFor((arg) => {
+            return arg.innerText.trim() != '';
+        }, (arg) => {
+            const msgContainer = arg.querySelector('yt-formatted-string.line-text');
+            console.log('[Movie-No-Ads][YTB] Dialog detected!! Msg: ', msgContainer.innerText);
+            //if (msgContainer && msgContainer.innerText.indexOf('Video paused') >= 0) {
+            if (msgContainer) {
+                msgContainer.innerText = 'Should auto continue...';
+                console.log('[Movie-No-Ads][YTB] Try to continue playing the video');
+                retry(() => {
+                    const bt = dialog.querySelector('.yt-spec-button-shape-next');
+                    if (bt && bt.getAttribute('aria-label') == 'Yes') {
+                        console.log('[Movie-No-Ads][YTB] Continue button clicked!');
+                        bt.click();
+                        
+                        return Promise.resolve({ err: null });
+                    }
+                    else {
+                        return Promise.reject({ err: '[Movie-No-Ads][YTB] Continue button is not found', el: dialog });
+                    }
+                }, 1000).catch(e => console.log('[Movie-No-Ads][YTB] Failed to continue playing', e));
+            }
+            else console.log('[Movie-No-Ads][YTB] Not a continue dialog');
+        }, dialog.querySelector('#scrollable'));
+    });
+});
 console.log('[Movie-No-Ads][YTB] Script registered!', Ytb.getLastCaptionState());

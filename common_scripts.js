@@ -259,8 +259,11 @@ const UtilityTool = {
     },
     findParent: function(el, selector){
         if(el.matches(selector)) return el;
-        else if(el.parentElement) return this.findParent(el.parentElement, selector);
-        else return null;
+        else return el.closest(selector);
+    },
+    findChild: function(el, selector){
+        if(el.matches(selector)) return el;
+        else return el.querySelector(selector);
     }
 };
 const FullScreenHelper = {
