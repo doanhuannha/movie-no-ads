@@ -14,4 +14,6 @@ UtilityTool.sendMessage({ cmd: 'hi', url }).then(siteConfig => {
     }
 
 });
-FullScreenHelper.start();
+HtmlMonitor.domReady(()=>{
+    FullScreenHelper.start();
+});

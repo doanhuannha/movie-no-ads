@@ -268,35 +268,74 @@ const UtilityTool = {
 };
 const FullScreenHelper = {
     idleTimeout: null,
-    idleDelay: 5000, // 15 seconds
+    idleDelay: 5000, // 5 seconds
+    mouseMoving: false,
+    shouldAutoHide: function () {
 
-    resetIdleTimer: function () {
-        if (document.body && document.body.classList.contains('hide-cursor')) {
-            document.body.classList.remove('hide-cursor');
-        }
-        if (this.idleTimeout) clearTimeout(this.idleTimeout);
-        if (this.isFullScreen()) {
-            this.idleTimeout = setTimeout(() => {
-                document.body.classList.add('hide-cursor');
-            }, this.idleDelay);
-        }
+        return this.isFullScreen() || (this.appliedElement && this.appliedElement.isHover);
     },
     isFullScreen: function () {
         return document.fullscreenElement || this.isF11Fullscreen();
     },
-    isF11Fullscreen: function () {
-        const threshold = 5; // tolerance in pixels
+    isF11Fullscreen: function (threshold = 5) {
         return (
-            Math.abs(window.innerHeight - screen.height) < threshold &&
-            Math.abs(window.innerWidth - screen.width) < threshold
-        );
+            Math.abs(window.innerWidth - screen.width) < threshold &&
+            Math.abs(window.innerHeight - screen.height) < threshold);
     },
-    start: function () {
-        console.log('[Movie-No-Ads] Auto hide cursor is enable');
-        document.addEventListener('mousemove', () => this.resetIdleTimer());
-        document.addEventListener('fullscreenchange', () => this.resetIdleTimer());
-        // Start the timer on load
-        this.resetIdleTimer();
+    resetCursor: function () {
+        if (document.body && document.body.classList.contains('hide-cursor')) {
+            document.body.classList.remove('hide-cursor');
+        }
+    },
+    resetTimer: function () {
+        if (this.idleTimeout) {
+            clearTimeout(this.idleTimeout);
+            this.idleTimeout = null;
+            console.log('timer is reset');
+        }
+    },
+    ensureTimer: function () {
+        if (!this.idleTimeout) {
+            this.idleTimeout = setTimeout(() => {
+                document.body.classList.add('hide-cursor');
+
+                console.log('hide cursor', document.hasFocus());
+            }, this.idleDelay);
+            console.log('timer is created');
+        }
+    },
+    start: function (el) {
+        document.body.addEventListener('mousemove', () => {
+            this.mouseMoving = true;
+            this.resetCursor();
+            this.resetTimer();
+            if (this.movingTimer) clearTimeout(this.movingTimer);
+            this.movingTimer = setTimeout(() => {
+                this.mouseMoving = false;
+                if (this.shouldAutoHide()) this.ensureTimer();
+            }, 500);
+        });
+        setInterval(() => {
+            if (this.shouldAutoHide()) {
+                if (!this.mouseMoving) this.ensureTimer();
+            }
+            else {
+                this.resetCursor();
+                this.resetTimer();
+            }
+        }, 1000);
+        if (el) {
+            this.appliedElement = el;
+            el.addEventListener('mouseover', function () {
+                this.isHover = true;
+                if (this.mouseTimer) clearTimeout(this.mouseTimer);
+            });
+            el.addEventListener('mouseout', function () {
+                this.mouseTimer = setTimeout(() => {
+                    this.isHover = false;
+                }, 100);
+            });
+        }
     }
 };
 console.log('[Movie-No-Ads] Common script is loaded', location.href);

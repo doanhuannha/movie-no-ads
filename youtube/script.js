@@ -255,9 +255,11 @@ const Ytb = {
     },
     restoreCaptionState: function () {
         if(this.skipCaptionRestore) return;
+        /*
         if(!this.isCaptionAvailable()){
             console.log('[Movie-No-Ads][YTB] Caption is unavailable');
         }
+        */
         if (this.isCaptionAvailable() && this.getLastCaptionState() != undefined){
             const bt = this.getCaptionButton();
             if(!bt) {
