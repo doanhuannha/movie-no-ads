@@ -277,7 +277,7 @@ HtmlMonitor.domReady(() => {
         
         var dialogs = document.querySelectorAll('tp-yt-paper-dialog');
         if(dialogs) for(const dialog of dialogs) {
-            if(dialog.textContent.includes('Ad blockers violate')){
+            if(dialog.textContent.includes('Allow YouTube Ads')){
                 console.log('[Movie-No-Ads][YTB] Ad-block Dialog detected, hide it', dialog);
                 dialog.style.display = 'none';
                 dialog.remove();
