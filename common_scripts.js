@@ -270,6 +270,7 @@ const FullScreenHelper = {
     idleTimeout: null,
     idleDelay: 5000, // 5 seconds
     mouseMoving: false,
+    hiddenCursor: false,
     shouldAutoHide: function () {
 
         return this.isFullScreen() || (this.appliedElement && this.appliedElement.isHover);
@@ -282,8 +283,16 @@ const FullScreenHelper = {
             Math.abs(window.innerWidth - screen.width) < threshold &&
             Math.abs(window.innerHeight - screen.height) < threshold);
     },
+    hideCursor: function () {
+        if (document.body && !document.body.classList.contains('hide-cursor')) {
+            document.body.classList.add('hide-cursor');
+            this.hiddenCursor = true;
+            console.log('hide cursor', document.hasFocus());
+        }
+    },
     resetCursor: function () {
         if (document.body && document.body.classList.contains('hide-cursor')) {
+            this.hiddenCursor = false;
             document.body.classList.remove('hide-cursor');
         }
     },
@@ -297,9 +306,8 @@ const FullScreenHelper = {
     ensureTimer: function () {
         if (!this.idleTimeout) {
             this.idleTimeout = setTimeout(() => {
-                document.body.classList.add('hide-cursor');
-
-                console.log('hide cursor', document.hasFocus());
+                this.hideCursor();
+                
             }, this.idleDelay);
             console.log('timer is created');
         }
@@ -317,6 +325,7 @@ const FullScreenHelper = {
         });
         setInterval(() => {
             if (this.shouldAutoHide()) {
+                if(this.hiddenCursor) this.hideCursor();
                 if (!this.mouseMoving) this.ensureTimer();
             }
             else {

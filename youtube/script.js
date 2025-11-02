@@ -14,6 +14,7 @@ UtilityTool.autoSkipAdVideo = function (containerSelector, adVideoDetectors, ski
                 Ytb.videoElement = video;
                 if (video && !video.myAutoPlay) {
                     console.log('[Movie-No-Ads] VID Element detected', video);
+                    
                     video.myAutoPlay = true;
                     container.addEventListener('click', function (e) {
                         console.log('[DEBUG]', e.target, e);
@@ -325,4 +326,6 @@ HtmlMonitor.domReady(() => {
         }, dialog.querySelector('#scrollable'));
     });
 });
-console.log('[Movie-No-Ads][YTB] Script registered!', Ytb.getLastCaptionState());
+
+
+console.log('[Movie-No-Ads][YTB] Script registered!', window.devicePixelRatio);

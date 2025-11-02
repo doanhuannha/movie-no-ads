@@ -82,7 +82,8 @@ cleanUp().then(() => {
                         {
                             header: 'user-agent',
                             operation: 'set',
-                            value: 'Mozilla/5.0 (Linux; Tizen 2.3) AppleWebKit/538.1 (KHTML, like Gecko)Version/2.3 TV Safari/538.1',
+                            value: 'Mozilla/5.0 (Linux; Tizen 6.0; SAMSUNG SM-Q900) AppleWebKit/537.36 (KHTML, like Gecko) TV Safari/537.36'
+                            //value: 'Mozilla/5.0 (Linux; Tizen 2.3) AppleWebKit/538.1 (KHTML, like Gecko)Version/2.3 TV Safari/538.1'
                         },
                     ]
                 },
